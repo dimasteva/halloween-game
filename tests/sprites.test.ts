@@ -131,45 +131,42 @@ describe('sprites', () => {
   });
 
   it.each([
-    ['cactusSmall', Sprites.cactusSmall, 17, 35],
-    ['cactusLarge', Sprites.cactusLarge, 25, 50],
-  ] as const)('%s is %i by %i', (_name, cactus, width, height) => {
-    expect(cactus.width).toBe(width);
-    expect(cactus.height).toBe(height);
+    ['pumpkinSmall', Sprites.pumpkinSmall, 17, 35],
+    ['pumpkinLarge', Sprites.pumpkinLarge, 25, 50],
+  ] as const)('%s is %i by %i', (_name, pumpkin, width, height) => {
+    expect(pumpkin.width).toBe(width);
+    expect(pumpkin.height).toBe(height);
   });
 
   it.each([
-    ['cactusSmall', Sprites.cactusSmall],
-    ['cactusLarge', Sprites.cactusLarge],
+    ['pumpkinSmall', Sprites.pumpkinSmall, { x: 2, y: 0, width: 13, height: 35 }],
+    ['pumpkinLarge', Sprites.pumpkinLarge, { x: 3, y: 0, width: 19, height: 50 }],
   ] as const)(
-    '%s stands on its base and its hitbox excludes the arm tips',
-    (_name, cactus) => {
-      const { hitbox } = cactus;
-      // The trunk reaches the bottom row, so the cactus sits on the ground.
-      expect(cactus.bitmap[cactus.height - 1]).toContain('#');
-      expect(hitbox.y + hitbox.height).toBe(cactus.height);
-      // Each arm reaches the outer column; those tip pixels lie outside the hitbox.
-      const column = (x: number): boolean =>
-        cactus.bitmap.some((row) => row[x] === '#');
-      expect(column(0)).toBe(true);
-      expect(column(cactus.width - 1)).toBe(true);
-      expect(hitbox.x).toBeGreaterThan(0);
-      expect(hitbox.x + hitbox.width).toBeLessThan(cactus.width);
-      // The whole trunk (the full-height columns) is inside the hitbox.
-      const trunk = [...Array(cactus.width).keys()].filter((x) =>
-        cactus.bitmap.slice(1).every((row) => row[x] === '#'),
-      );
-      expect(trunk.length).toBeGreaterThan(0);
-      for (const x of trunk) {
-        expect(x).toBeGreaterThanOrEqual(hitbox.x);
-        expect(x).toBeLessThan(hitbox.x + hitbox.width);
-      }
+    '%s has the expected hitbox',
+    (_name, pumpkin, expectedHitbox) => {
+      expect(pumpkin.hitbox).toEqual(expectedHitbox);
     },
   );
 
-  it('obstacleSprite maps each kind to its cactus', () => {
-    expect(obstacleSprite('small')).toBe(Sprites.cactusSmall);
-    expect(obstacleSprite('large')).toBe(Sprites.cactusLarge);
+  it.each([
+    ['pumpkinSmall', Sprites.pumpkinSmall],
+    ['pumpkinLarge', Sprites.pumpkinLarge],
+  ] as const)(
+    '%s stands on its base and its hitbox excludes the outer edges',
+    (_name, pumpkin) => {
+      const { hitbox } = pumpkin;
+      // The body reaches the bottom row, so the pumpkin sits on the ground.
+      expect(pumpkin.bitmap[pumpkin.height - 1]).toContain('#');
+      expect(hitbox.y + hitbox.height).toBe(pumpkin.height);
+      // The hitbox is inset from the edges for grazing forgiveness.
+      expect(hitbox.x).toBeGreaterThan(0);
+      expect(hitbox.x + hitbox.width).toBeLessThan(pumpkin.width);
+    },
+  );
+
+  it('obstacleSprite maps each kind to its pumpkin', () => {
+    expect(obstacleSprite('small')).toBe(Sprites.pumpkinSmall);
+    expect(obstacleSprite('large')).toBe(Sprites.pumpkinLarge);
   });
 
   it('the ground tile is a full-width line on top', () => {

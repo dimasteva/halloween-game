@@ -553,7 +553,7 @@ describe('2.3 cacti', () => {
     expect(spawns.length).toBeGreaterThan(0);
     for (const { obstacle } of spawns) {
       const sprite =
-        obstacle.kind === 'small' ? Sprites.cactusSmall : Sprites.cactusLarge;
+        obstacle.kind === 'small' ? Sprites.pumpkinSmall : Sprites.pumpkinLarge;
       expect(obstacle.y + obstacle.height).toBe(GROUND_Y);
       expect(obstacle.hitbox).toEqual({
         x: obstacle.x + sprite.hitbox.x,

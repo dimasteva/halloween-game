@@ -63,7 +63,7 @@ function idleState(overrides: Partial<GameState> = {}): GameState {
 
 /** A hand-built obstacle standing on the ground at `x`, sized from its sprite. */
 function obstacle(id: number, kind: ObstacleKind, x: number): Obstacle {
-  const sprite = kind === 'small' ? Sprites.cactusSmall : Sprites.cactusLarge;
+  const sprite = kind === 'small' ? Sprites.pumpkinSmall : Sprites.pumpkinLarge;
   const y = GROUND_Y - sprite.height;
   return {
     id,
@@ -468,9 +468,9 @@ describe('built-in drawers', () => {
 
     const obstacles = rectsPerCallback(ctx)[1];
     expect(obstacles).toEqual([
-      ...spriteRects(Sprites.cactusSmall, small.x, small.y),
+      ...spriteRects(Sprites.pumpkinSmall, small.x, small.y),
       // 512.5 snaps to the pixel grid (spec 2.9).
-      ...spriteRects(Sprites.cactusLarge, Math.round(large.x), large.y),
+      ...spriteRects(Sprites.pumpkinLarge, Math.round(large.x), large.y),
     ]);
   });
 
@@ -610,9 +610,9 @@ describe('pixel grid (functional spec 2.9)', () => {
 
     const [, obstacles, dino] = rectsPerCallback(ctx);
     expect(obstacles).toEqual([
-      ...spriteRects(Sprites.cactusSmall, 694, Math.round(small.y)),
+      ...spriteRects(Sprites.pumpkinSmall, 694, Math.round(small.y)),
       ...spriteRects(
-        Sprites.cactusLarge,
+        Sprites.pumpkinLarge,
         Math.round(large.x),
         Math.round(large.y),
       ),

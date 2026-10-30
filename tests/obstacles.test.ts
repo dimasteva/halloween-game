@@ -123,7 +123,7 @@ describe('makeObstacle', () => {
     'stands a %s cactus on the ground with an absolute hitbox',
     (kind) => {
       const sprite =
-        kind === 'small' ? Sprites.cactusSmall : Sprites.cactusLarge;
+        kind === 'small' ? Sprites.pumpkinSmall : Sprites.pumpkinLarge;
       const obstacle = makeObstacle(kind, 300, 4, 2);
       expect(obstacle).toEqual({
         id: 4,
@@ -305,7 +305,7 @@ describe('advanceObstacles (2.3 removal)', () => {
   });
 
   it('drops an obstacle once it is fully past the left edge, keeping order', () => {
-    const width = Sprites.cactusSmall.width;
+    const width = Sprites.pumpkinSmall.width;
     const obstacles = [
       small(-width + 6, 0),
       small(-width + 5, 1),

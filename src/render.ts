@@ -9,7 +9,7 @@
 import { assertNever } from './assert.js';
 import { formatScore } from './score.js';
 import { Sprites, obstacleSprite, type Sprite } from './sprites.js';
-import { CANVAS, GROUND_Y, HUD, PALETTE } from './tuning.js';
+import { CANVAS, GROUND_Y, HALLOWEEN_PALETTE, HUD, PALETTE } from './tuning.js';
 import type {
   DrawContext,
   GameState,
@@ -306,7 +306,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       const scale = canvas.width / CANVAS.width;
       ctx.setTransform(scale, 0, 0, scale, 0, 0);
       ctx.imageSmoothingEnabled = false;
-      ctx.fillStyle = PALETTE.bg;
+      ctx.fillStyle = HALLOWEEN_PALETTE.bg;
       ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
       stack.run(ctx, state);
     },

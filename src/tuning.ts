@@ -22,6 +22,19 @@ export const PALETTE = {
 } as const;
 
 /**
+ * Halloween Edition palette: dark indigo background, pale cream for sky accents,
+ * orange for pumpkin body, deep orange face, dark grey ground tint.
+ */
+export const HALLOWEEN_PALETTE = {
+  bg: '#1a0b2e',
+  moon: '#f5e6d3',
+  cloud: '#3d2a54',
+  pumpkin: '#ff8c42',
+  pumpkinFace: '#d55d0e',
+  ground: '#2d1b3d',
+} as const;
+
+/**
  * The game-over puddle (functional spec 2.5): full width in logical px, and how
  * many render frames it takes to spread (30 frames is about 0.5 s at 60 Hz).
  */

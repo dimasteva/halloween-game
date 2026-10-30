@@ -4,14 +4,14 @@ Five vertical slices. After each slice the game still boots, `npm test` still pa
 
 ---
 
-- [ ] **Slice 1: Pumpkins replace cacti, Halloween palette applied**
+- [x] **Slice 1: Pumpkins replace cacti, Halloween palette applied**
 
   _Smallest user-visible step: the game still runs exactly as before, but the obstacles look like jack-o-lanterns and the colours are Halloween. No gameplay change, no new events. Covers functional-spec AC 2.1a/b/c._
 
-  - [ ] Add `PUMPKIN_SMALL` and `PUMPKIN_LARGE` bitmaps to `src/sprites.ts`, with the **same width, height and hitbox** as the existing `CACTUS_SMALL` and `CACTUS_LARGE`. Expose them as `Sprites.pumpkinSmall` and `Sprites.pumpkinLarge`. Grow `obstacleSprite(kind)` so `'small'` returns `pumpkinSmall` and `'large'` returns `pumpkinLarge`. Delete the `CACTUS_SMALL`, `CACTUS_LARGE`, `Sprites.cactusSmall`, `Sprites.cactusLarge` entries — nothing outside this spec references them. **[Agent: typescript-game]**
-  - [ ] Add `HALLOWEEN_PALETTE` to `src/tuning.ts` (dark indigo background, pale cream for sky accents, orange for pumpkin body, deep orange face, dark grey ground tint). Update the renderer to read background colour from `HALLOWEEN_PALETTE.bg` instead of `PALETTE.bg`. Keep `PALETTE.fg` for the dino and HUD text. **[Agent: typescript-game]**
-  - [ ] Update or add tests in `tests/sprites.test.ts`: assert `obstacleSprite('small') === Sprites.pumpkinSmall`, assert pumpkin bitmap dimensions equal the former cactus bitmap dimensions (hitbox-preserving swap), and remove any assertions that referenced `cactusSmall`/`cactusLarge` by name. **[Agent: typescript-game]**
-  - [ ] Verify: run `npm test` (both type-check programs and Vitest). Start `npm run dev`, open the page in the browser, confirm pumpkins appear instead of cacti and the background is dark indigo, then stop the dev server (kill by PID) and delete any screenshots created during the check. **[Agent: typescript-game]**
+  - [x] Add `PUMPKIN_SMALL` and `PUMPKIN_LARGE` bitmaps to `src/sprites.ts`, with the **same width, height and hitbox** as the existing `CACTUS_SMALL` and `CACTUS_LARGE`. Expose them as `Sprites.pumpkinSmall` and `Sprites.pumpkinLarge`. Grow `obstacleSprite(kind)` so `'small'` returns `pumpkinSmall` and `'large'` returns `pumpkinLarge`. Delete the `CACTUS_SMALL`, `CACTUS_LARGE`, `Sprites.cactusSmall`, `Sprites.cactusLarge` entries — nothing outside this spec references them. **[Agent: typescript-game]**
+  - [x] Add `HALLOWEEN_PALETTE` to `src/tuning.ts` (dark indigo background, pale cream for sky accents, orange for pumpkin body, deep orange face, dark grey ground tint). Update the renderer to read background colour from `HALLOWEEN_PALETTE.bg` instead of `PALETTE.bg`. Keep `PALETTE.fg` for the dino and HUD text. **[Agent: typescript-game]**
+  - [x] Update or add tests in `tests/sprites.test.ts`: assert `obstacleSprite('small') === Sprites.pumpkinSmall`, assert pumpkin bitmap dimensions equal the former cactus bitmap dimensions (hitbox-preserving swap), and remove any assertions that referenced `cactusSmall`/`cactusLarge` by name. **[Agent: typescript-game]**
+  - [x] Verify: run `npm test` (both type-check programs and Vitest). Start `npm run dev`, open the page in the browser, confirm pumpkins appear instead of cacti and the background is dark indigo, then stop the dev server (kill by PID) and delete any screenshots created during the check. **[Agent: typescript-game]**
 
 - [ ] **Slice 2: Night sky with moon and drifting clouds**
 
