@@ -830,6 +830,58 @@ describe('2.7 restarting', () => {
     expect(game.state()).toEqual(before);
     expect(events).toEqual([]);
   });
+
+  it('resets tick to 0 and speed to START_SPEED on restart (spec 2.7 starting pace)', () => {
+    // The dying tick is non-zero (dies around the first cactus), so without
+    // the explicit reset `freshRun`'s spread of the dead run would carry it
+    // into the restart.
+    const { game } = deadGame();
+    const dead = game.state();
+    expect(dead.phase).toBe('dead');
+    expect(dead.tick).toBeGreaterThan(0);
+
+    game.dispatch('primary');
+    game.tick();
+
+    const s = game.state();
+    expect(s.phase).toBe('running');
+    expect(s.tick).toBe(0);
+    expect(s.speed).toBe(START_SPEED);
+  });
+
+  it('runs the first post-restart step at tick 1 and speedAt(1), not the previous run\'s next tick', () => {
+    // After restart, the next running step must come from a fresh ramp: tick 1
+    // at speedAt(1). Without the reset, it would be dead.tick + 1 at a speed
+    // high up the ramp.
+    const { game } = deadGame();
+    game.dispatch('primary');
+    game.tick(); // apply restart
+    game.tick(); // first running step after restart
+
+    const s = game.state();
+    expect(s.tick).toBe(1);
+    expect(s.speed).toBe(speedAt(1));
+  });
+
+  it('ten restarts in a row each start at the starting pace (spec 2.7 verified: 11 restarts, each at speed 6)', () => {
+    // Spec 2.7 verified: "11 restarts in a row, each at speed 6". Without
+    // resetting tick in freshRun, each restart carries the previous death's
+    // tick into the next run, so speed only ever stays or climbs.
+    const { game } = makeGame(SEED, { hi: 7 });
+    pressPrimary(game);
+    dieWithoutJumping(game);
+    for (let i = 0; i < 10; i += 1) {
+      game.dispatch('primary');
+      game.tick(); // apply restart; nothing moves on this step
+      const s = game.state();
+      expect(s.phase).toBe('running');
+      expect(s.tick).toBe(0);
+      expect(s.speed).toBe(START_SPEED);
+      // Run the next cycle to death, so the following restart has a non-zero
+      // dying tick and the reset actually has something to overwrite.
+      dieWithoutJumping(game);
+    }
+  });
 });
 
 describe('2.6 score rate', () => {
