@@ -12,6 +12,9 @@
 import { nextRandom } from './rng.js';
 import { Sprites, obstacleSprite } from './sprites.js';
 import {
+  BAT_FLIGHT_Y,
+  BAT_PROBABILITY,
+  BAT_UNLOCK_SCORE,
   CANVAS,
   DINO_X,
   FIRST_ARRIVAL_TICKS,
@@ -47,7 +50,7 @@ export type Drawn<T> = readonly [value: T, rngState: number];
 export const DINO_REACH_X =
   DINO_X + Sprites.dinoStand.hitbox.x + Sprites.dinoStand.hitbox.width;
 
-/** One obstacle of `kind` standing on the ground at `x`, with an absolute hitbox. */
+/** One obstacle of `kind` at `x`. Ground obstacles stand on GROUND_Y, bats fly at BAT_FLIGHT_Y. */
 export function makeObstacle(
   kind: ObstacleKind,
   x: number,
@@ -55,7 +58,7 @@ export function makeObstacle(
   group: number,
 ): Obstacle {
   const sprite = obstacleSprite(kind);
-  const y = GROUND_Y - sprite.height;
+  const y = kind === 'bat' ? BAT_FLIGHT_Y : GROUND_Y - sprite.height;
   return {
     id,
     group,
@@ -82,17 +85,31 @@ export interface GroupRequest {
   readonly group: number;
   /** A kind the group must have (the both-kinds guarantee); `undefined` for none. */
   readonly forcedKind?: ObstacleKind | undefined;
+  /** Current score, used to determine if bats should spawn. */
+  readonly score?: number | undefined;
 }
 
 /**
- * A group of 1 to MAX_GROUP_SIZE obstacles standing directly next to each
- * other, sharing one `group`. Always takes exactly two draws: the first picks
- * a single large cactus with LARGE_CACTUS_PROBABILITY, otherwise small cacti;
- * the second picks how many small ones (1 to MAX_GROUP_SIZE). `forcedKind`
- * overrides the first draw; a forced large is always a single.
+ * A group of 1 to MAX_GROUP_SIZE obstacles. Takes exactly three draws: the first
+ * (unconditional) decides bat vs ground obstacles; the second picks large vs small
+ * for ground obstacles; the third picks the count of small obstacles. `forcedKind`
+ * overrides the second draw for ground obstacles; a forced large is always a single.
+ * A bat group is always a single bat at BAT_FLIGHT_Y, ignoring `forcedKind`.
  */
 export function makeGroup(request: GroupRequest): Drawn<readonly Obstacle[]> {
-  const [kindDraw, afterKind] = nextRandom(request.rngState);
+  // Unconditional bat draw (always happens, even if score < BAT_UNLOCK_SCORE).
+  const [batDraw, afterBat] = nextRandom(request.rngState);
+  const score = request.score ?? 0;
+  if (score >= BAT_UNLOCK_SCORE && batDraw < BAT_PROBABILITY) {
+    // Single bat at flight height.
+    const bat = makeObstacle('bat', request.x, request.nextId, request.group);
+    // Advance rng by two more draws to keep the same state after this group.
+    const [, afterKind] = nextRandom(afterBat);
+    const [, afterSize] = nextRandom(afterKind);
+    return [[bat], afterSize];
+  }
+  // Ground obstacles: existing two draws.
+  const [kindDraw, afterKind] = nextRandom(afterBat);
   const [sizeDraw, afterSize] = nextRandom(afterKind);
   const kind: ObstacleKind =
     request.forcedKind ??
@@ -208,7 +225,7 @@ export function earliestArrivalFromEdge(leadHitboxX: number): number {
  */
 export function firstSpawnX(rngState: number): Drawn<number> {
   const [, next] = nextRandom(rngState);
-  const [peek] = makeGroup({ rngState: next, x: 0, nextId: 0, group: 0 });
+  const [peek] = makeGroup({ rngState: next, x: 0, nextId: 0, group: 0, score: 0 });
   const leadHitboxX = peek[0]?.hitbox.x ?? 0;
   const [tick] = firstArrivalTick(
     rngState,

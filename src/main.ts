@@ -107,8 +107,13 @@ installDeathShake({ game, renderer });
 // Each run gets a fresh keyboard, so a key still held from the crash does not
 // count as already pressed in the next run.
 function bindKeyboard(): void {
-  attachKeyboard(window, createKeyboard(), (intent) => {
-    game.dispatch(intent);
+  attachKeyboard(window, createKeyboard(), {
+    onIntent: (intent) => {
+      game.dispatch(intent);
+    },
+    onDuckChange: (held) => {
+      game.setDuck(held);
+    },
   });
 }
 bindKeyboard();

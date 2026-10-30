@@ -117,4 +117,8 @@ Marketing asked for a Halloween edition of the game for the week of October 31. 
 
 ## Change Log
 
-_No amendments yet._
+### Slice 4 (Bats and Ducking)
+
+**ArrowDown removed from regression test's OTHER_KEYS** (section 2.6): With ducking live, `ArrowDown` and `KeyS` are defined controls, not "other" keys. The regression tests at `tests/regression.acceptance.test.ts` previously asserted that pressing `ArrowDown` on the start or game-over screens changes nothing; with this change, those tests still assert that non-primary, non-duck keys change nothing.
+
+**Space while ducking is ignored** (section 2.5): When the player holds down or S while the dinosaur is on the ground, pressing space does not jump on that press. The dinosaur must first release the duck key (returning to the run pose) before space will jump. This clarifies the spec's "cancels the crouch and does not jump on that press" wording: the cancel happens, but jumping still requires a fresh space press while not ducking.

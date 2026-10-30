@@ -18,11 +18,10 @@ import { JUMP_DURATION_TICKS, MAX_GROUP_SIZE } from '../src/tuning.js';
 import type { Game, GameState, Obstacle } from '../src/types.js';
 import { collect, makeGame, pressPrimary, runUntil } from './helpers.js';
 
-/** Keys a player might press that are neither SPACE nor the UP arrow. */
+/** Keys a player might press that are neither primary nor duck keys. */
 const OTHER_KEYS = [
   'KeyA',
   'Enter',
-  'ArrowDown',
   'ArrowLeft',
   'ArrowRight',
   'Escape',
@@ -77,8 +76,13 @@ function keyboardGame(seed: number): {
 } {
   const made = makeGame(seed, { hi: 7 });
   const win = fakeWindow();
-  attachKeyboard(win.target, createKeyboard(), (intent) => {
-    made.game.dispatch(intent);
+  attachKeyboard(win.target, createKeyboard(), {
+    onIntent: (intent) => {
+      made.game.dispatch(intent);
+    },
+    onDuckChange: (held) => {
+      made.game.setDuck(held);
+    },
   });
   return { made, press: win.press };
 }

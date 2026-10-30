@@ -3,8 +3,8 @@
 
 export type Intent = 'primary';
 export type Phase = 'idle' | 'running' | 'dead';
-export type DinoPose = 'stand' | 'run' | 'hit';
-export type ObstacleKind = 'small' | 'large';
+export type DinoPose = 'stand' | 'run' | 'hit' | 'duck';
+export type ObstacleKind = 'small' | 'large' | 'bat';
 export type LayerName =
   'background' | 'parallax' | 'world' | 'foreground' | 'hud';
 
@@ -65,6 +65,7 @@ export interface Game {
   tick(n?: number): void; // advance exactly n steps (default 1)
   frame(nowMs: number): number; // browser accumulator; returns steps run
   dispatch(intent: Intent): void; // queued, applied at the next step
+  setDuck(hold: boolean): void; // duck input: held state, updated from keyboard adapter
   state(): GameState; // plain, JSON-serialisable deep copy
   view(): GameState; // live projection for the renderer; do not keep across steps
   on: EventSource['on'];

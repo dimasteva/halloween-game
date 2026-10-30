@@ -185,3 +185,18 @@ export const DUST_SALT = 0xd057;
 
 /** Salt for death shake randomness. */
 export const SHAKE_SALT = 0x5afe;
+
+/** Flight height for bat obstacles, in logical px from the top. */
+export const BAT_FLIGHT_Y = 190;
+
+/** Probability that a group past BAT_UNLOCK_SCORE is a bat instead of pumpkins. */
+export const BAT_PROBABILITY = 0.3;
+
+/** Score threshold at which bats start appearing. */
+export const BAT_UNLOCK_SCORE = 200;
+
+/** Duck hitbox (relative to dino's 44x47 bounding box): crouched pose. */
+export const DUCK_HITBOX = { x: 12, y: 24, width: 22, height: 21 } as const;
+
+/** Key codes for ducking (ArrowDown and KeyS). */
+export const DUCK_CODES: ReadonlySet<string> = new Set(['ArrowDown', 'KeyS']);

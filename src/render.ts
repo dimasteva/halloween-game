@@ -119,6 +119,8 @@ export function dinoSprite(dino: GameState['dino']): Sprite {
       return Sprites.dinoHit;
     case 'run':
       return dino.frame === 0 ? Sprites.dinoRun0 : Sprites.dinoRun1;
+    case 'duck':
+      return dino.frame === 0 ? Sprites.dinoDuck0 : Sprites.dinoDuck1;
     default:
       return assertNever(dino.pose);
   }

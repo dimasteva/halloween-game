@@ -34,6 +34,7 @@ import { Sprites } from './sprites.js';
 import {
   BLINK_SCHEDULE,
   DINO_X,
+  DUCK_HITBOX,
   FRAME_CLAMP_MS,
   GROUND_Y,
   RUN_FRAME_TICKS,
@@ -242,26 +243,39 @@ function isBlinkVisible(run: RunState): boolean {
   return !BLINK_SCHEDULE.some(([from, to]) => elapsed >= from && elapsed <= to);
 }
 
-function projectDino(run: RunState): Dino {
-  // Every dino sprite (stand, run, hit) has the same size and hitbox, so the
-  // geometry comes from the standing one; the renderer picks the drawn sprite
-  // from `pose` and `frame`.
+function projectDino(run: RunState, duckHeld: boolean): Dino {
+  // Every dino sprite (stand, run, hit, duck) has the same 44x47 bounding box.
+  // The geometry comes from the standing one unless ducking.
   const sprite = Sprites.dinoStand;
-  const { x: hx, y: hy, width: hw, height: hh } = sprite.hitbox;
+  let hx = sprite.hitbox.x;
+  let hy = sprite.hitbox.y;
+  let hw = sprite.hitbox.width;
+  let hh = sprite.hitbox.height;
+  let pose = poseFor(run.phase);
+
+  // Duck pose and hitbox when running, on ground, and duck is held.
+  if (run.phase === 'running' && run.dino.onGround && duckHeld) {
+    pose = 'duck';
+    hx = DUCK_HITBOX.x;
+    hy = DUCK_HITBOX.y;
+    hw = DUCK_HITBOX.width;
+    hh = DUCK_HITBOX.height;
+  }
+
   return {
     x: DINO_X,
     y: run.dino.y,
     width: sprite.width,
     height: sprite.height,
     onGround: run.dino.onGround,
-    pose: poseFor(run.phase),
+    pose,
     frame: run.dino.frame,
     hitbox: { x: DINO_X + hx, y: run.dino.y + hy, width: hw, height: hh },
   };
 }
 
 /** The public view of a run. HUD fields are derived here, never stored. */
-function project(run: RunState): GameState {
+function project(run: RunState, duckHeld: boolean): GameState {
   return {
     phase: run.phase,
     tick: run.tick,
@@ -270,7 +284,7 @@ function project(run: RunState): GameState {
     scrollX: run.scrollX,
     score: run.score,
     hi: run.hi,
-    dino: projectDino(run),
+    dino: projectDino(run, duckHeld),
     obstacles: run.obstacles,
     spawnLog: run.spawnLog,
     hud: {
@@ -290,6 +304,7 @@ function step(
   run: RunState,
   intent: Intent | undefined,
   deps: StepDeps,
+  duckHeld: boolean,
 ): StepResult {
   switch (run.phase) {
     case 'idle':
@@ -300,7 +315,7 @@ function step(
       // Step 2: nothing else happens on the start screen.
       return { run, events: [] };
     case 'running':
-      return stepRunning(run, intent, deps);
+      return stepRunning(run, intent, deps, duckHeld);
     case 'dead':
       // Step 1: `primary` in dead restarts: the same fresh run as a start,
       // announced as `restart` only (never also `start`).
@@ -340,6 +355,7 @@ function stepObstacles(
     nextId: run.nextObstacleId,
     group: run.nextGroup,
     forcedKind,
+    score: run.score,
   });
   const trailing = trailingEdge(group);
   const [gap, rngState] = nextGapPx(
@@ -373,8 +389,9 @@ function stepCollision(
   run: RunState,
   events: GameEvent[],
   deps: StepDeps,
+  duckHeld: boolean,
 ): RunState {
-  if (!hasCollision(projectDino(run), run.obstacles)) {
+  if (!hasCollision(projectDino(run, duckHeld), run.obstacles)) {
     return run;
   }
   const isNewHighScore = beatsHighScore(run.score, run.hi);
@@ -396,6 +413,7 @@ function stepRunning(
   run: RunState,
   intent: Intent | undefined,
   deps: StepDeps,
+  duckHeld: boolean,
 ): StepResult {
   const events: GameEvent[] = [];
 
@@ -408,8 +426,9 @@ function stepRunning(
   }
 
   // Step 4: `primary` on the ground is a jump; in the air it is ignored.
+  // When ducking, primary is also ignored (duck overrides jump).
   let body = run.dino;
-  if (intent === 'primary' && isOnGround(body)) {
+  if (intent === 'primary' && isOnGround(body) && !duckHeld) {
     body = startJump(body);
     events.push({ type: 'jump' });
   }
@@ -446,7 +465,7 @@ function stepRunning(
 
   // Step 9: collision, skipped when `collisions` is false. A hit sets
   // `phase 'dead'`, which makes the pose `'hit'` in `project`.
-  const checked = deps.collisions ? stepCollision(moved, events, deps) : moved;
+  const checked = deps.collisions ? stepCollision(moved, events, deps, duckHeld) : moved;
 
   // Step 10: animation fields (the HUD and pose are derived in `project`).
   // The run frame holds while airborne, judged after this step's physics.
@@ -474,6 +493,7 @@ export function createGame(deps: GameDeps): Game {
     },
   };
   let run = initialRun(deps);
+  let duckHeld = false;
   const queue: Intent[] = [];
   // Re-entrancy guard: true while a step runs or its events are emitted.
   let isStepping = false;
@@ -487,7 +507,7 @@ export function createGame(deps: GameDeps): Game {
     // taps in one browser frame otherwise auto-chain jumps after landing.
     const intent = isAirborne(run) ? undefined : queue.shift();
     queue.length = 0;
-    const result = step(run, intent, stepDeps);
+    const result = step(run, intent, stepDeps, duckHeld);
     // Commit first, so a listener calling state() sees the post-step run.
     run = result.run;
     for (const event of result.events) {
@@ -534,6 +554,14 @@ export function createGame(deps: GameDeps): Game {
     return steps;
   }
 
+  // Subscribe to start and restart events to reset duckHeld.
+  bus.on('start', () => {
+    duckHeld = false;
+  });
+  bus.on('restart', () => {
+    duckHeld = false;
+  });
+
   return {
     tick: (n = 1) => {
       assertNotStepping('tick');
@@ -544,8 +572,11 @@ export function createGame(deps: GameDeps): Game {
       // Step 4: `primary` in the air is ignored.
       if (!isAirborne(run)) queue.push(intent);
     },
-    state: () => structuredClone(project(run)),
-    view: () => project(run),
+    setDuck: (hold) => {
+      duckHeld = hold;
+    },
+    state: () => structuredClone(project(run, duckHeld)),
+    view: () => project(run, duckHeld),
     on: (type, handler) => bus.on(type, handler),
   };
 }

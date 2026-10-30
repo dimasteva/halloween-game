@@ -118,7 +118,12 @@ describe('attachKeyboard', () => {
   it('forwards primary intents and prevents default on Space and ArrowUp only', () => {
     const fake = fakeTarget();
     const intents: Intent[] = [];
-    attachKeyboard(fake.target, createKeyboard(), (i) => intents.push(i));
+    attachKeyboard(fake.target, createKeyboard(), {
+      onIntent: (i) => intents.push(i),
+      onDuckChange: () => {
+        /* unused */
+      },
+    });
 
     expect(fake.key('keydown', 'Space').defaultPrevented).toBe(true);
     // Held: the reducer returns null, but scrolling is still prevented.
@@ -135,7 +140,12 @@ describe('attachKeyboard', () => {
   it('releases held keys on blur', () => {
     const fake = fakeTarget();
     const intents: Intent[] = [];
-    attachKeyboard(fake.target, createKeyboard(), (i) => intents.push(i));
+    attachKeyboard(fake.target, createKeyboard(), {
+      onIntent: (i) => intents.push(i),
+      onDuckChange: () => {
+        /* unused */
+      },
+    });
 
     fake.key('keydown', 'Space');
     fake.fire('blur'); // the keyup is lost while unfocused
@@ -147,7 +157,12 @@ describe('attachKeyboard', () => {
   it('releases held keys when the page becomes hidden, not when visible', () => {
     const fake = fakeTarget();
     const intents: Intent[] = [];
-    attachKeyboard(fake.target, createKeyboard(), (i) => intents.push(i));
+    attachKeyboard(fake.target, createKeyboard(), {
+      onIntent: (i) => intents.push(i),
+      onDuckChange: () => {
+        /* unused */
+      },
+    });
 
     fake.key('keydown', 'Space');
     fake.fire('visibilitychange'); // still visible: Space stays held
@@ -162,8 +177,13 @@ describe('attachKeyboard', () => {
 
   it('dispose() removes all four listeners', () => {
     const fake = fakeTarget();
-    const handle = attachKeyboard(fake.target, createKeyboard(), () => {
-      /* unused */
+    const handle = attachKeyboard(fake.target, createKeyboard(), {
+      onIntent: () => {
+        /* unused */
+      },
+      onDuckChange: () => {
+        /* unused */
+      },
     });
     expect(fake.count()).toBe(4);
     handle.dispose();
