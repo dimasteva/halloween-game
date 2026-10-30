@@ -194,12 +194,12 @@ describe('makeGroup (2.3 groups)', () => {
     ]);
   });
 
-  it('is a pure function of its rng state and takes two draws', () => {
+  it('is a pure function of its rng state and takes three draws (one bat check + two existing)', () => {
     const [a, afterA] = makeGroup({ rngState: 99, x: 0, nextId: 0, group: 0 });
     const [b, afterB] = makeGroup({ rngState: 99, x: 0, nextId: 0, group: 0 });
     expect(a).toEqual(b);
     expect(afterA).toBe(afterB);
-    expect(afterA).toBe(rngStates(99, 3)[2]);
+    expect(afterA).toBe(rngStates(99, 4)[3]);
   });
 
   it('honours a forced kind, a forced large being a single', () => {

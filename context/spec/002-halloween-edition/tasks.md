@@ -24,7 +24,7 @@ Five vertical slices. After each slice the game still boots, `npm test` still pa
   - [ ] Add `tests/features/night-sky.test.ts`: install the feature on a recording `DrawContext` and a stub `game.on`, assert the moon's draw position stays constant over 60 render frames, assert the first cloud's x moves by `60 * CLOUD_DRIFT_PX_PER_FRAME` after 60 frames, and assert clouds still move while `phase === 'dead'`. **[Agent: typescript-game]**
   - [ ] Verify: run `npm test`. Start `npm run dev`, open the page, watch for 10 seconds without pressing a key, confirm at least two clouds visibly drift sideways in the same direction and the moon stays fixed, then stop the dev server (kill by PID) and delete any screenshots created during the check. **[Agent: typescript-game]**
 
-- [ ] **Slice 3: Progressive darkness + four event reactions**
+- [x] **Slice 3: Progressive darkness + four event reactions**
 
   _Covers AC 2.3 and AC 2.4. Each reaction is its own small feature module; dropping any one of them still leaves a working game._
 
@@ -37,7 +37,7 @@ Five vertical slices. After each slice the game still boots, `npm test` still pa
   - [ ] Add `tests/features/darkness.test.ts`, `tests/features/jump-land-dust.test.ts`, `tests/features/milestone-flash.test.ts`, `tests/features/death-shake.test.ts`: for each feature, assert the recorded `globalAlpha`, `fillRect` or camera-offset values match the expected opacity ramp, frame count or amplitude. **[Agent: typescript-game]**
   - [ ] Verify: run `npm test`. Start `npm run dev`, play a run of at least a minute, confirm by eye that the scene gradually darkens, dust puffs appear on jump and land, a jack-o-lantern flashes every 100 points, and the screen shakes on death. Stop the dev server (kill by PID) and delete any screenshots. **[Agent: typescript-game]**
 
-- [ ] **Slice 4: Bats and ducking (Tier 2)**
+- [x] **Slice 4: Bats and ducking (Tier 2)**
 
   _Covers AC 2.5 and the new-unit-test criterion 2.6. This is the only slice that touches gameplay logic; the public contract grows in exactly three places (`ObstacleKind`, `DinoPose`, `Game.setDuck`) and the regression test is updated once._
 
