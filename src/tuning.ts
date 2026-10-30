@@ -146,3 +146,15 @@ export const HUD = {
   /** Space between the end of the HI value and the start of the score. */
   hiGap: 20,
 } as const;
+
+/** Moon position (Halloween Edition, Slice 2). */
+export const MOON_POSITION = { x: 650, y: 50 } as const;
+
+/** Number of clouds drifting across the night sky (Halloween Edition, Slice 2). */
+export const CLOUD_COUNT = 3;
+
+/** Cloud drift speed, in logical px per render frame (Halloween Edition, Slice 2). */
+export const CLOUD_DRIFT_PX_PER_FRAME = 0.3;
+
+/** Salt for cloud RNG (Halloween Edition, Slice 2). */
+export const CLOUD_SALT = 0x5a17;

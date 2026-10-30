@@ -294,6 +294,56 @@ const GROUND = [
   '..........#.........##..................#.........###...........',
 ] as const;
 
+// 16 by 16: moon silhouette (decorative).
+const MOON = [
+  '....##########..',
+  '..##############',
+  '.###############',
+  '################',
+  '################',
+  '################',
+  '################',
+  '################',
+  '################',
+  '################',
+  '################',
+  '################',
+  '################',
+  '.###############',
+  '..##############',
+  '....##########..',
+] as const;
+
+// 24 by 10: small fluffy cloud (decorative).
+const CLOUD_SMALL = [
+  '....######..######......',
+  '..##################....',
+  '.######################.',
+  '########################',
+  '########################',
+  '########################',
+  '########################',
+  '.######################.',
+  '..##################....',
+  '....##############......',
+] as const;
+
+// 32 by 12: large fluffy cloud (decorative).
+const CLOUD_LARGE = [
+  '......########..########........',
+  '....########################....',
+  '..############################..',
+  '.##############################.',
+  '################################',
+  '################################',
+  '################################',
+  '################################',
+  '.##############################.',
+  '..############################..',
+  '....########################....',
+  '......####################......',
+] as const;
+
 export const Sprites = Object.freeze({
   dinoStand: makeSprite(DINO_STAND, DINO_HITBOX),
   dinoRun0: makeSprite(DINO_RUN_0, DINO_HITBOX),
@@ -303,6 +353,10 @@ export const Sprites = Object.freeze({
   pumpkinLarge: makeSprite(PUMPKIN_LARGE, PUMPKIN_LARGE_HITBOX),
   // Decorative; nothing collides with the ground.
   ground: makeSprite(GROUND, { x: 0, y: 0, width: 64, height: 4 }),
+  // Decorative; nominal 1x1 hitbox since they never collide.
+  moon: makeSprite(MOON, { x: 0, y: 0, width: 1, height: 1 }),
+  cloudSmall: makeSprite(CLOUD_SMALL, { x: 0, y: 0, width: 1, height: 1 }),
+  cloudLarge: makeSprite(CLOUD_LARGE, { x: 0, y: 0, width: 1, height: 1 }),
 });
 
 /**
