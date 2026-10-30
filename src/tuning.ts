@@ -146,3 +146,30 @@ export const HUD = {
   /** Space between the end of the HI value and the start of the score. */
   hiGap: 20,
 } as const;
+
+/** Maximum opacity for the darkness overlay (Halloween Edition). */
+export const DARKNESS_MAX_OPACITY = 0.35;
+
+/** Ticks over which darkness ramps to max opacity (60 s at 60 Hz). */
+export const DARKNESS_RAMP_TICKS = 3600;
+
+/** Render frames the jump dust puff is visible. */
+export const JUMP_DUST_FRAMES = 10;
+
+/** Render frames the land dust puff is visible. */
+export const LAND_DUST_FRAMES = 12;
+
+/** Render frames the death screen shake lasts. */
+export const SHAKE_FRAMES = 18;
+
+/** Maximum camera offset amplitude for the death shake, in px. */
+export const SHAKE_AMPLITUDE_PX = 4;
+
+/** Render frames the milestone flash jack-o-lantern is visible. */
+export const MILESTONE_FLASH_FRAMES = 20;
+
+/** Salt for dust particle randomness. */
+export const DUST_SALT = 0xd057;
+
+/** Salt for death shake randomness. */
+export const SHAKE_SALT = 0x5afe;
