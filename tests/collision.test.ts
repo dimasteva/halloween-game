@@ -11,11 +11,11 @@ const DINO_SIZE = {
   height: Sprites.dinoStand.height,
 } as const;
 const DINO_HITBOX: Rect = Sprites.dinoStand.hitbox;
-const CACTUS_SMALL_SIZE = {
-  width: Sprites.cactusSmall.width,
-  height: Sprites.cactusSmall.height,
+const PUMPKIN_SMALL_SIZE = {
+  width: Sprites.pumpkinSmall.width,
+  height: Sprites.pumpkinSmall.height,
 } as const;
-const CACTUS_SMALL_HITBOX: Rect = Sprites.cactusSmall.hitbox;
+const PUMPKIN_SMALL_HITBOX: Rect = Sprites.pumpkinSmall.hitbox;
 
 function offset(box: Rect, x: number, y: number): Rect {
   return { x: x + box.x, y: y + box.y, width: box.width, height: box.height };
@@ -38,15 +38,15 @@ function groundDino(): Dino {
 
 /** A small cactus on the ground with its left edge at `x`. */
 function smallCactus(x: number, id = 0): Obstacle {
-  const y = GROUND_Y - CACTUS_SMALL_SIZE.height;
+  const y = GROUND_Y - PUMPKIN_SMALL_SIZE.height;
   return {
     x,
     y,
-    ...CACTUS_SMALL_SIZE,
+    ...PUMPKIN_SMALL_SIZE,
     id,
     group: id,
     kind: 'small',
-    hitbox: offset(CACTUS_SMALL_HITBOX, x, y),
+    hitbox: offset(PUMPKIN_SMALL_HITBOX, x, y),
   };
 }
 
