@@ -12,10 +12,10 @@ const DINO_SIZE = {
 } as const;
 const DINO_HITBOX: Rect = Sprites.dinoStand.hitbox;
 const CACTUS_SMALL_SIZE = {
-  width: Sprites.cactusSmall.width,
-  height: Sprites.cactusSmall.height,
+  width: Sprites.pumpkinSmall.width,
+  height: Sprites.pumpkinSmall.height,
 } as const;
-const CACTUS_SMALL_HITBOX: Rect = Sprites.cactusSmall.hitbox;
+const CACTUS_SMALL_HITBOX: Rect = Sprites.pumpkinSmall.hitbox;
 
 function offset(box: Rect, x: number, y: number): Rect {
   return { x: x + box.x, y: y + box.y, width: box.width, height: box.height };

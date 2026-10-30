@@ -4,9 +4,11 @@
 
 import { createBus } from './events.js';
 import { installPuddle } from './features/puddle.js';
+import { installSecretMode } from './features/secret-mode.js';
 import { createGame } from './game.js';
 import { createKeyboard } from './input.js';
 import { attachKeyboard } from './input-dom.js';
+import { createKonamiDetector } from './konami.js';
 import { backingSize, createRenderer } from './render.js';
 import { parseSeed } from './rng.js';
 import { createMemoryStore, createStorageStore } from './store.js';
@@ -94,6 +96,10 @@ fitCanvas(canvas);
 const renderer = createRenderer(canvas);
 // Cosmetic features plug in from outside the game loop (architecture 2.2).
 installPuddle({ game, renderer });
+// Easter egg (Exercise 8). The flag lives here so it survives game restarts
+// and so the frozen __dino getter can read it; the feature only draws.
+let secretMode = false;
+installSecretMode({ renderer, isActive: () => secretMode });
 // Each run gets a fresh keyboard, so a key still held from the crash does not
 // count as already pressed in the next run.
 function bindKeyboard(): void {
@@ -104,11 +110,22 @@ function bindKeyboard(): void {
 bindKeyboard();
 game.on('restart', bindKeyboard);
 
+// Second window listener that watches for the Konami sequence. Runs alongside
+// the game's keyboard adapter, which is why ArrowUp still jumps while typing
+// the code. preventDefault is not called here — the game adapter handles that.
+const konami = createKonamiDetector();
+window.addEventListener('keydown', (event) => {
+  if (konami.press(event.code)) secretMode = !secretMode;
+});
+
 // 5. Read-only hook for end-to-end tests. Frozen so page code cannot replace it.
 window.__dino = Object.freeze({
   state: () => game.state(),
   seed,
   version: 1,
+  get secret() {
+    return secretMode;
+  },
 });
 
 // 6. Animation loop. Re-arm first: if a frame throws, the next one still runs.

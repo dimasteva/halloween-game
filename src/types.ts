@@ -134,4 +134,6 @@ export interface DinoHook {
   readonly state: () => GameState;
   readonly seed: number | undefined;
   readonly version: number;
+  /** True while the Konami-code secret mode is on (Exercise 8). */
+  readonly secret: boolean;
 }
