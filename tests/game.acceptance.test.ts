@@ -331,6 +331,42 @@ describe('2.2 jumping', () => {
     expect(jumps).toHaveLength(2);
     expect(game.state().dino.onGround).toBe(false);
   });
+
+  it('consumes at most one primary intent per step and drops the rest (arch 2.2 Input model)', () => {
+    // Collisions off so an unintended three-jump chain is not masked by an
+    // early death. Three rapid taps in one browser frame = three dispatches
+    // before any step runs — the exact user-observed "arbitrary number of
+    // jumps" scenario.
+    const { game } = makeGame(42, { deps: { collisions: false } });
+    pressPrimary(game);
+    const jumps = collect(game, 'jump');
+    const lands = collect(game, 'land');
+
+    game.dispatch('primary');
+    game.dispatch('primary');
+    game.dispatch('primary');
+
+    game.tick(JUMP_DURATION_TICKS * 4);
+
+    // Without the fix: three queued primaries chain into three jumps.
+    expect(jumps).toHaveLength(1);
+    expect(lands).toHaveLength(1);
+  });
+
+  it('drops queued primaries that survived the consuming step (no auto-jump on landing)', () => {
+    // Two intents queued before any step: the step consumes one and must drop
+    // the other, even though the following steps are airborne.
+    const { game } = makeGame(42, { deps: { collisions: false } });
+    pressPrimary(game);
+    const jumps = collect(game, 'jump');
+
+    game.dispatch('primary');
+    game.dispatch('primary');
+    game.tick(1);
+    game.tick(JUMP_DURATION_TICKS + 5);
+
+    expect(jumps).toHaveLength(1);
+  });
 });
 
 describe('2.2 legs alternate', () => {

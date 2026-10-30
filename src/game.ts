@@ -482,9 +482,11 @@ export function createGame(deps: GameDeps): Game {
   let accumulatorMs = 0;
 
   function advance(): void {
-    // Step 1: at most one queued intent per step, oldest first; the queue
-    // waits while the dino is in the air.
+    // Step 1: at most one queued intent per step, oldest first; drop the rest
+    // (architecture 2.2 Input model; tech considerations 2.4 step 1). Rapid
+    // taps in one browser frame otherwise auto-chain jumps after landing.
     const intent = isAirborne(run) ? undefined : queue.shift();
+    queue.length = 0;
     const result = step(run, intent, stepDeps);
     // Commit first, so a listener calling state() sees the post-step run.
     run = result.run;
