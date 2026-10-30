@@ -150,11 +150,38 @@ export const HUD = {
 /** Moon position (Halloween Edition, Slice 2). */
 export const MOON_POSITION = { x: 650, y: 50 } as const;
 
-/** Number of clouds drifting across the night sky (Halloween Edition, Slice 2). */
+/** Number of clouds drifting across the night sky. */
 export const CLOUD_COUNT = 3;
 
-/** Cloud drift speed, in logical px per render frame (Halloween Edition, Slice 2). */
+/** Cloud drift speed, in logical px per render frame. */
 export const CLOUD_DRIFT_PX_PER_FRAME = 0.3;
 
-/** Salt for cloud RNG (Halloween Edition, Slice 2). */
+/** Salt for cloud RNG. */
 export const CLOUD_SALT = 0x5a17;
+
+/** Maximum opacity for the darkness overlay. */
+export const DARKNESS_MAX_OPACITY = 0.35;
+
+/** Ticks over which darkness ramps to max opacity (60 s at 60 Hz). */
+export const DARKNESS_RAMP_TICKS = 3600;
+
+/** Render frames the jump dust puff is visible. */
+export const JUMP_DUST_FRAMES = 10;
+
+/** Render frames the land dust puff is visible. */
+export const LAND_DUST_FRAMES = 12;
+
+/** Render frames the death screen shake lasts. */
+export const SHAKE_FRAMES = 18;
+
+/** Maximum camera offset amplitude for the death shake, in px. */
+export const SHAKE_AMPLITUDE_PX = 4;
+
+/** Render frames the milestone flash jack-o-lantern is visible. */
+export const MILESTONE_FLASH_FRAMES = 20;
+
+/** Salt for dust particle randomness. */
+export const DUST_SALT = 0xd057;
+
+/** Salt for death shake randomness. */
+export const SHAKE_SALT = 0x5afe;

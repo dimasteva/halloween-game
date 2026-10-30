@@ -13,7 +13,7 @@ Five vertical slices. After each slice the game still boots, `npm test` still pa
   - [x] Update or add tests in `tests/sprites.test.ts`: assert `obstacleSprite('small') === Sprites.pumpkinSmall`, assert pumpkin bitmap dimensions equal the former cactus bitmap dimensions (hitbox-preserving swap), and remove any assertions that referenced `cactusSmall`/`cactusLarge` by name. **[Agent: typescript-game]**
   - [x] Verify: run `npm test` (both type-check programs and Vitest). Start `npm run dev`, open the page in the browser, confirm pumpkins appear instead of cacti and the background is dark indigo, then stop the dev server (kill by PID) and delete any screenshots created during the check. **[Agent: typescript-game]**
 
-- [ ] **Slice 2: Night sky with moon and drifting clouds**
+- [x] **Slice 2: Night sky with moon and drifting clouds**
 
   _Adds a self-contained cosmetic feature. No gameplay change. Covers AC 2.2a–e._
 

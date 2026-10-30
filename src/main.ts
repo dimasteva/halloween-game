@@ -3,6 +3,10 @@
 // the canvas and requestAnimationFrame. Everything else stays testable in Node.
 
 import { createBus } from './events.js';
+import { installDarkness } from './features/darkness.js';
+import { installDeathShake } from './features/death-shake.js';
+import { installJumpLandDust } from './features/jump-land-dust.js';
+import { installMilestoneFlash } from './features/milestone-flash.js';
 import { installNightSky } from './features/night-sky.js';
 import { installPuddle } from './features/puddle.js';
 import { createGame } from './game.js';
@@ -96,6 +100,10 @@ const renderer = createRenderer(canvas);
 // Cosmetic features plug in from outside the game loop (architecture 2.2).
 installNightSky({ game, renderer });
 installPuddle({ game, renderer });
+installDarkness({ game, renderer });
+installJumpLandDust({ game, renderer });
+installMilestoneFlash({ game, renderer });
+installDeathShake({ game, renderer });
 // Each run gets a fresh keyboard, so a key still held from the crash does not
 // count as already pressed in the next run.
 function bindKeyboard(): void {
